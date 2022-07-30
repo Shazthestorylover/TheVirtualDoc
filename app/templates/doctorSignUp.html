@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <div class="login-form center-block">
+    <h2>Please add Signup Details</h2>
+    {% include 'flash_messages.html' %}
+    <form action="{{ url_for('doctorSignUp') }}" method="POST">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        {{ form.first_name.label(class = "form-control-label") }}
+        {{ form.first_name(class='form-control', placeholder="Enter your first name") }}
+      </div>
+
+      <div class="form-group">
+        {{ form.last_name.label(class = "form-control-label") }}
+        {{ form.last_name(class='form-control', placeholder="Enter your last name") }}
+      </div>
+
+      <div class="form-group">
+        {{ form.specialty.label(class = "form-control-label") }}
+        {{ form.specialty(class='form-control', placeholder="Enter your specialty") }}
+      </div>
+
+      <div class="form-group">
+        {{ form.title.label(class = "form-control-label") }}
+        {{ form.title(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.phoneNumber.label(class = "form-control-label") }}
+        {{ form.phoneNumber(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.emailAddress.label(class = "form-control-label") }}
+        {{ form.emailAddress(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.companyName.label(class = "form-control-label") }}
+        {{ form.companyName(class='form-control') }}
+      </div>
+      
+      <div class="form-group">
+        {{ form.password.label(class = "form-control-label") }}
+        {{ form.password(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.confirm_password.label(class = "form-control-label") }}
+        {{ form.confirm_password(class='form-control') }}
+      </div>
+      <button type="submit" name="submit" class="btn btn-primary btn-block">Sign Up</button>
+    </form>
+  </div>
+{% endblock %}

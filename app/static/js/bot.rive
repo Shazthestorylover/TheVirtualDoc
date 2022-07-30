@@ -1,0 +1,16 @@
+// conversation script is below
+// "start" auto-runs to begin the bot conversation 
+
+
++ start 
+- Hello. I am your virtual doctor. What would you like assistance with today?
+
++ appointment
+- Would you like to set an appointment?
+
++ sick
+- Are you feeling sick?
+
++ *
+- Sorry, I don't understand that.
+

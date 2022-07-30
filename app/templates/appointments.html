@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <div class="login-form center-block">
+    <h2>Please Log in</h2>
+    {% include 'flash_messages.html' %}
+    <form action="{{ url_for('patientlogin') }}" method="post">
+      {{ form.csrf_token }}
+      <div class="form-group">
+        {{ form.first_name.label(class = "form-control-label") }}
+        {{ form.first_name(class='form-control', placeholder="Enter your first name") }}
+      </div>
+
+      <div class="form-group">
+        {{ form.last_name.label(class = "form-control-label") }}
+        {{ form.last_name(class='form-control', placeholder="Enter your last name") }}
+      </div>
+
+      <div class="form-group">
+        {{ form.emailAddress.label(class = "form-control-label") }}
+        {{ form.emailAddress(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.phoneNumber.label(class = "form-control-label") }}
+        {{ form.phoneNumber(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.date.label(class = "form-control-label") }}
+        {{ form.date(class='form-control') }}
+      </div>
+
+      <div class="form-group">
+        {{ form.reason.label(class = "form-control-label") }}
+        {{ form.reason(class='form-control') }}
+      </div>
+
+      <button type="submit" name="submit" class="btn btn-primary btn-block">Make Appoinment</button>
+    </form>
+  </div>
+{% endblock %}

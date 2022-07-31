@@ -104,13 +104,13 @@ def about():
 
 @app.route('/chat/')
 def chat(): 
-    """Render the website's about page."""
+    """Render the website's chatbot page."""
     return render_template('patientpage.html', title ='Chat')
 
 @app.route('/patientpage/')
 def patientpage(): 
     """Render the website's DocBot page."""
-    return render_template('patientpage.html', title ='DocBotVirt')
+    return render_template('patientpage.html', title ='DocBotVirtualDoctor')
 
 @app.route('/patientSignUp', methods=["GET","POST"])
 def patientSignUp():
@@ -184,20 +184,28 @@ def doclogin():
 
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patientlogin():
+    print("Step 1")
     if current_user.is_authenticated:
+        print("Step 2")
         return render_template("loggedin.html",title = 'Already Logged In')
     form = patientLoginForm()
+    print("Step 3")
     if  form.validate_on_submit() and request.method =='POST':
+        print("Step 4")
         username = form.username.data
         emailAddress = form.emailAddress.data
         password = form.password.data
         patient = PatientsProfile.query.filter_by(username = username).first()
         if patient is not None and check_password_hash(patient.password, password):
+            print("Step 5")
             login_user(patient)
+            
             flash("You have been logged in!", 'success')
             return render_template('patientpage.html', Title = "Welcome patient")
         else:
+            print("Step 5")
             flash("Credentials does not match", 'danger')
+    print("Step 6")
     return render_template('patientlogin.html', form=form)
 
 @app.route("/appointments", methods=["GET", "POST"])
@@ -214,6 +222,46 @@ def logout():
     flash("You have been logged out!", 'success')
     return redirect(url_for('home'))
 
+# Update database record for patient info.
+# /<string:patientId>
+@app.route("/update/<int:patientId>", methods=["GET", "POST"])
+#@login_required
+def update_patient_record(patientId=0):
+    
+    # Get a form ()
+    form = patientSignUpForm()
+    print(form)
+
+    # Getting patient info from database
+    form_field_to_update = PatientsProfile.query.filter_by(id = patientId).first()
+    print("id:", patientId)
+    print("form to update: ",form_field_to_update)
+    
+    
+    if request.method == "POST":
+        try:
+            form_field_to_update.first_name = form.first_name.data
+            form_field_to_update.last_name = form.last_name.data
+            form_field_to_update.DOB = form.DOB.data
+            form_field_to_update.emailAddress = form.emailAddress.data
+            form_field_to_update.username = form.username.data
+            #
+            # form_field_to_update.password = form.password.data
+        
+            db.session.commit()
+            flash("Patient's data was successfully updated.")
+            return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user) #
+        
+        except Exception as exc: 
+            db.session.rollback()
+            print (exc)
+            flash("Sorry, patient doesn't exist",'danger')
+            return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
+    else:
+        return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
+    
+    
+    
 @login_manager.user_loader
 def load_user(doctorId):
     info = DoctorsProfile.query.filter_by(id=doctorId).first()

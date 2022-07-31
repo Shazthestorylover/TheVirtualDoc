@@ -7,8 +7,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 
-
-
 class DoctorsProfile(db.Model):
     __tablename__ = 'doctor_profiles'
 
@@ -21,6 +19,9 @@ class DoctorsProfile(db.Model):
     emailAddress = db.Column(db.String(160), unique =True)
     companyName  = db.Column(db.String(80))
     password = db.Column(db.String(255))
+
+    # one doctor many appointments
+    appointments=relationship("Appointment", backref="doctor_profiles", lazy="select")
 
     def __init__(self,first_name, last_name, specialty,
     title, phoneNumber, emailAddress, companyName, password):
@@ -51,7 +52,6 @@ class DoctorsProfile(db.Model):
     def __repr__(self):
         return self.title + " " + self.last_name
         #return '<DoctorsProfile %r>' % (self.emailAddress)
-
 class PatientsProfile(db.Model):
     # You can use this to change the table name. The default convention is to use
     # the class name. In this case a class name of PatientsProfile would create a
@@ -97,24 +97,19 @@ class PatientsProfile(db.Model):
 class Appointment(db.Model):
     __tablename__ = 'appointments'
     id = db.Column(db.Integer, primary_key=True)
-    emailAddress = db.Column(db.String(160))
-    first_name = db.Column(db.String(160))
-    last_name = db.Column(db.String(80))
-    phoneNumber = db.Column(db.String(80))
-    date = db.Column(db.DateTime)
-    doctor = db.Column(db.String(80))
-    reason = db.Column(db.String(255))
-    link = db.Column(db.String(255))
+    title = db.Column(db.String(255))
+    date = db.Column(db.String(255))
+    time = db.Column(db.String(255))
+    url = db.Column(db.String(255))
 
-    def __init__(self, emailAddress, first_name, last_name, phoneNumber, date, doctor, reason, link):
-        self.emailAddress = emailAddress
-        self.first_name = first_name
-        self.last_name = last_name
-        self.phoneNumber = phoneNumber
+    #many appointments to one doctor
+    doctor_id = Column(Integer, ForeignKey("doctor_profiles.id"))
+
+    def __init__(self, title, date, time, url):
+        self.title = title
         self.date = date
-        self.doctor = doctor
-        self.reason = reason
-        self.link = link
+        self.time = time
+        self.url = url
 
     def is_authenticated(self):
         return True

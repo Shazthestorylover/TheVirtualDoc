@@ -2,12 +2,17 @@ import email
 from pydoc import doc
 from . import db
 from werkzeug.security import generate_password_hash
+from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
+
+
 
 
 class DoctorsProfile(db.Model):
     __tablename__ = 'doctor_profiles'
 
-    doctorId = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     specialty = db.Column(db.String(80))
@@ -17,9 +22,8 @@ class DoctorsProfile(db.Model):
     companyName  = db.Column(db.String(80))
     password = db.Column(db.String(255))
 
-    def __init__(self, doctorId,first_name, last_name, specialty,
+    def __init__(self,first_name, last_name, specialty,
     title, phoneNumber, emailAddress, companyName, password):
-        self.doctorId = doctorId
         self.first_name = first_name
         self.last_name = last_name
         self.specialty = specialty
@@ -40,9 +44,9 @@ class DoctorsProfile(db.Model):
 
     def get_id(self):
         try:
-            return str(self.doctorId)  # python 2 support
+            return str(self.id)  # python 2 support
         except NameError:
-            return str(self.doctorId)  # python 3 support
+            return str(self.id)  # python 3 support
 
     def __repr__(self):
         return self.title + " " + self.last_name
@@ -55,7 +59,7 @@ class PatientsProfile(db.Model):
     # to `user_profiles` (plural) or some other name.
     __tablename__ = 'patient_profiles'
 
-    patientId = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(80))
     last_name = db.Column(db.String(80))
     DOB = db.Column(db.DateTime)
@@ -63,8 +67,7 @@ class PatientsProfile(db.Model):
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(255))
 
-    def __init__(self, patientId, first_name, last_name, DOB, emailAddress, username, password):
-        self.patientId = patientId
+    def __init__(self, first_name, last_name, DOB, emailAddress, username, password):
         self.first_name = first_name
         self.last_name = last_name
         self.DOB = DOB
@@ -83,9 +86,9 @@ class PatientsProfile(db.Model):
 
     def get_id(self):
         try:
-            return str(self.patientId)  # python 2 support
+            return str(self.id)  # python 2 support
         except NameError:
-            return str(self.patientId)  # python 3 support
+            return str(self.id)  # python 3 support
 
     def __repr__(self):
         return (self.username)
@@ -93,7 +96,7 @@ class PatientsProfile(db.Model):
 
 class Appointment(db.Model):
     __tablename__ = 'appointments'
-    patientId = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     emailAddress = db.Column(db.String(160))
     first_name = db.Column(db.String(160))
     last_name = db.Column(db.String(80))
@@ -103,8 +106,7 @@ class Appointment(db.Model):
     reason = db.Column(db.String(255))
     link = db.Column(db.String(255))
 
-    def __init__(self, patientId, emailAddress, first_name, last_name, phoneNumber, date, doctor, reason, link):
-        self.patientId = patientId
+    def __init__(self, emailAddress, first_name, last_name, phoneNumber, date, doctor, reason, link):
         self.emailAddress = emailAddress
         self.first_name = first_name
         self.last_name = last_name
@@ -134,13 +136,12 @@ class Appointment(db.Model):
 
 class AppointmentSchedule(db.Model):
     __tablename__ = 'appointment_schedule'
-    doctorId = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     doctor_name = db.Column(db.String(160))
     time = db.Column(db.String(60))
     date = db.Column(db.DateTime)
 
-    def __init__(self, doctorId, doctor_name, time, date, emailAddress):
-        self.doctorId = doctorId 
+    def __init__(self, doctor_name, time, date, emailAddress): 
         self.doctor_name = doctor_name
         self.time = time
         self.date = date
@@ -157,24 +158,23 @@ class AppointmentSchedule(db.Model):
 
     def get_id(self):
         try:
-            return str(self.doctorId)  # python 2 support
+            return str(self.id)  # python 2 support
         except NameError:
-            return str(self.doctorId)  # python 3 support
+            return str(self.id)  # python 3 support
 
     def __repr__(self):
         return '<AppointmentSchedule %r>' % (self.doctor_name)
 
 class PatientRecord(db.Model):
     __tablename__ = 'patient_record'
-    patientId = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     patient_name = db.Column(db.String(160))
     patient_illness = db.Column(db.String(160))
     patient_report = db.Column(db.String(255))
     medication = db.Column(db.String(255))
     phoneNumber = db.Column(db.String(255))
 
-    def __init__(self, patientID, patientname, patient_illness, patient_report, medication, phoneNumber):
-        self.patientId = patientID
+    def __init__(self, patientname, patient_illness, patient_report, medication, phoneNumber):
         self.patient_name = patientname
         self.patient_illness = patient_illness
         self.patient_report = patient_report
@@ -192,9 +192,9 @@ class PatientRecord(db.Model):
 
     def get_id(self):
         try:
-            return str(self.patientId)  # python 2 support
+            return str(self.id)  # python 2 support
         except NameError:
-            return str(self.patientId)  # python 3 support
+            return str(self.id)  # python 3 support
 
     def __repr__(self):
         return '<PatientRecord %r>' % (self.patient_name)

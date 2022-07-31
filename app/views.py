@@ -2,6 +2,7 @@
 Flask Documentation:     http://flask.pocoo.org/docs/
 Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
+https://www.youtube.com/watch?v=CiuC5PF4I-A
 This file creates your application.
 """
 
@@ -19,7 +20,20 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 
 
-
+events = [
+    {
+        'title' : 'Appointment1',
+        'start' : '2022-08-04',
+        'end' : '',
+        'url' : 'https://us04web.zoom.us/j/77327765484?pwd=xPWo9HCwMgCHw5AmCpPKcwdjxI6JUr.1'
+    },
+    {
+        'title' : 'Appointment2',
+        'start' : '2022-08-04',
+        'end' : '2022-08-05',
+        'url' : 'https://meet.google.com/yxh-sbub-wpj'
+    },
+]
 
 #Helper functions
 def genid():
@@ -32,11 +46,30 @@ def home():
 
 @app.route('/calendar')
 def calendar():
-    return render_template('calendar.html')
+    return render_template('calendar.html', events=events)
 
-@app.route('/add')
-def add():
-    return render_template('add.html')
+@app.route('/setAppointment')
+def setAppointment():
+    return render_template('setAppointment.html', events=events)
+
+@app.route('/addAppointment', methods = ["GET", "POST"])
+def addAppointment():
+    if request.method == "POST":
+        title = request.form['title']
+        start = request.form['start']
+        end = request.form['end']
+        url = request.form['url']
+        if end == '':
+            end=start
+        events.append({
+            'title' : title,
+            'start' : start,
+            'end' : end,
+            'url' : url
+        },
+        )
+        flash("Appointment made", 'success')
+    return render_template('addAppointment.html')
 
 @app.route('/about/')
 def about(): 

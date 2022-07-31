@@ -1,3 +1,4 @@
+from calendar import MONDAY
 from datetime import datetime
 from random import choices
 from flask_wtf import FlaskForm

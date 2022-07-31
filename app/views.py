@@ -92,7 +92,7 @@ def patientSignUp():
     if request.method == "POST" and form.validate_on_submit():
         emailAddress = form.emailAddress.data
         patient = PatientsProfile.query.filter_by(emailAddress = emailAddress).first()
-        patient_info = PatientsProfile(patientId= genid(),first_name=form.first_name.data, last_name=form.last_name.data, 
+        patient_info = PatientsProfile(first_name=form.first_name.data, last_name=form.last_name.data, 
         DOB=form.DOB.data, emailAddress=form.emailAddress.data, username=form.username.data, password=form.password.data)
         #patient_info.set_password(form.password.data)
         try:
@@ -119,7 +119,7 @@ def doctorSignUp():
     if request.method == "POST" and form.validate_on_submit():
         emailAddress = form.emailAddress.data
         doctor = DoctorsProfile.query.filter_by(emailAddress = emailAddress).first()
-        doctor_info = DoctorsProfile(doctorId = genid(), first_name = form.first_name.data, last_name = form.last_name.data, specialty = form.specialty.data,
+        doctor_info = DoctorsProfile(first_name = form.first_name.data, last_name = form.last_name.data, specialty = form.specialty.data,
         title = form.title.data, phoneNumber = form.phoneNumber.data, emailAddress = form.emailAddress.data, companyName = form.companyName.data, password=form.password.data)
         try:
             if doctor is None:
@@ -139,7 +139,7 @@ def doctorSignUp():
         flash("Please check form information and try again")
     return render_template('doctorSignUp.html', form=form)
 
-@app.route("/doctorlogin", methods=["GET", "POST"])
+@app.route("/doclogin", methods=["GET", "POST"])
 def doclogin():
     if current_user.is_authenticated:
         return render_template("loggedin.html",title = 'Already Logged In')
@@ -190,11 +190,11 @@ def logout():
 
 @login_manager.user_loader
 def load_user(doctorId):
-    info = DoctorsProfile.query.filter_by(doctorId=doctorId).first()
+    info = DoctorsProfile.query.filter_by(id=doctorId).first()
     if  info == None:
-        return PatientsProfile.query.filter_by(patientId=doctorId).first()
+        return PatientsProfile.query.filter_by(id=doctorId).first()
     else:
-        return DoctorsProfile.query.filter_by(doctorId=doctorId).first()
+        return DoctorsProfile.query.filter_by(id=doctorId).first()
 
 #@login_manager.user_loader
 #def load_user(patientId):

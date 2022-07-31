@@ -9,7 +9,7 @@
     <h2>Update Patient Info</h2>
     {% include 'flash_messages.html' %}
 
-    <form action="/update/1" method="POST">
+    <form action="{{ url_for('update_patient_record', patientId=User.id) }}" method="POST">
       {{ form.csrf_token }}
 
       <!-- patient ID
@@ -21,35 +21,35 @@
 
       <div class="form-group">
         {{ form.first_name.label(class = "form-control-label") }}
-        {{ form.first_name(class='form-control', value=form_to_update.first_name) }}
+        {{ form.first_name(class='form-control', value=form_field_to_update.first_name) }}
       </div>
 
       <div class="form-group">
         {{ form.last_name.label(class = "form-control-label") }}
-        {{ form.last_name(class='form-control', value=form_to_update.last_name) }}
+        {{ form.last_name(class='form-control', value=form_field_to_update.last_name) }}
       </div>
 
       <div class="form-group">
         {{ form.DOB.label(class = "form-control-label") }}
-        {{ form.DOB(class='form-control', value=form_to_update.DOB) }}
+        {{ form.DOB(class='form-control', value=form_field_to_update.DOB) }}
       </div>
 
       <div class="form-group">
         {{ form.emailAddress.label(class = "form-control-label") }}
-        {{ form.emailAddress(class='form-control', value=form_to_update.emailAddress) }}
+        {{ form.emailAddress(class='form-control', value=form_field_to_update.emailAddress) }}
       </div>
 
       <div class="form-group">
         {{ form.username.label(class = "form-control-label") }}
-        {{ form.username(class='form-control', value=form_to_update.username) }}
+        {{ form.username(class='form-control', value=form_field_to_update.username) }}
       </div>
       
+      <!--
       <div class="form-group">
         {{ form.password.label(class = "form-control-label") }}
-        {{ form.password(class='form-control', value=form_to_update.password) }}
+        {{ form.password(class='form-control', value=form_field_to_update.password) }}
       </div>
 
-      <!--
       <div class="form-group">
         {{ form.confirm_password.label(class = "form-control-label") }}
         {{ form.confirm_password(class='form-control') }}
@@ -65,8 +65,11 @@
 
 {% block js%}
 <script>
+    let id = "{{User.id}}"
     let user = "{{User.first_name}}"
-    console.log(User);
+    console.log(id);
+    console.log(user);
+    
 </script>
 {%endblock%}
 

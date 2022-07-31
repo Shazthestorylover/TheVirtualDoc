@@ -184,20 +184,28 @@ def doclogin():
 
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patientlogin():
+    print("Step 1")
     if current_user.is_authenticated:
+        print("Step 2")
         return render_template("loggedin.html",title = 'Already Logged In')
     form = patientLoginForm()
+    print("Step 3")
     if  form.validate_on_submit() and request.method =='POST':
+        print("Step 4")
         username = form.username.data
         emailAddress = form.emailAddress.data
         password = form.password.data
         patient = PatientsProfile.query.filter_by(username = username).first()
         if patient is not None and check_password_hash(patient.password, password):
+            print("Step 5")
             login_user(patient)
+            
             flash("You have been logged in!", 'success')
             return render_template('patientpage.html', Title = "Welcome patient")
         else:
+            print("Step 5")
             flash("Credentials does not match", 'danger')
+    print("Step 6")
     return render_template('patientlogin.html', form=form)
 
 @app.route("/appointments", methods=["GET", "POST"])
@@ -216,38 +224,41 @@ def logout():
 
 # Update database record for patient info.
 # /<string:patientId>
-@app.route("/update", methods=["GET", "POST"])
+@app.route("/update/<int:patientId>", methods=["GET", "POST"])
 #@login_required
-def update_patient_record():
-    patientId = "1"
+def update_patient_record(patientId=0):
     
     # Get a form ()
     form = patientSignUpForm()
+    print(form)
 
     # Getting patient info from database
-    form_to_update = PatientRecord.query.filter_by(patientId = patientId).first()
+    form_field_to_update = PatientsProfile.query.filter_by(id = patientId).first()
+    print("id:", patientId)
+    print("form to update: ",form_field_to_update)
     
     
     if request.method == "POST":
         try:
-            form_to_update.first_name = request.form['First Name']
-            form_to_update.last_name = request.form['Last Name']
-            form_to_update.DOB = request.form['DOB']
-            form_to_update.emailAddress = request.form['Email']
-            form_to_update.username = request.form['Username']
-            form_to_update.password = request.form['Password']
+            form_field_to_update.first_name = form.first_name.data
+            form_field_to_update.last_name = form.last_name.data
+            form_field_to_update.DOB = form.DOB.data
+            form_field_to_update.emailAddress = form.emailAddress.data
+            form_field_to_update.username = form.username.data
+            #
+            # form_field_to_update.password = form.password.data
         
             db.session.commit()
             flash("Patient's data was successfully updated.")
-            return render_template("update.html", form=form, form_to_update=form_to_update, User=current_user) #
+            return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user) #
         
         except Exception as exc: 
             db.session.rollback()
             print (exc)
             flash("Sorry, patient doesn't exist",'danger')
-            return render_template("update.html", form=form, form_to_update=form_to_update)
+            return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
     else:
-        return render_template("update.html", form=form, form_to_update=form_to_update, User=current_user)
+        return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
     
     
     

@@ -104,13 +104,13 @@ def about():
 
 @app.route('/chat/')
 def chat(): 
-    """Render the website's about page."""
+    """Render the website's chatbot page."""
     return render_template('patientpage.html', title ='Chat')
 
 @app.route('/patientpage/')
 def patientpage(): 
     """Render the website's DocBot page."""
-    return render_template('patientpage.html', title ='DocBotVirt')
+    return render_template('patientpage.html', title ='DocBotVirtualDoctor')
 
 @app.route('/patientSignUp', methods=["GET","POST"])
 def patientSignUp():
@@ -214,6 +214,41 @@ def logout():
     flash("You have been logged out!", 'success')
     return redirect(url_for('home'))
 
+# Update database record for patient info.
+@app.route("/update/<string:patientId>", methods=["GET", "POST"])
+@login_required
+def update_patient_record(patientId):
+    
+    # Get a form ()
+    form = patientSignUpForm()
+
+    # Getting patient info from database
+    form_to_update = PatientRecord.query.filter_by(patientId = patientId).first()
+    
+    
+    if request.method == "POST":
+        try:
+            form_to_update.first_name = request.form['First Name']
+            form_to_update.last_name = request.form['Last Name']
+            form_to_update.DOB = request.form['DOB']
+            form_to_update.emailAddress = request.form['Email']
+            form_to_update.username = request.form['Username']
+            form_to_update.password = request.form['Password']
+        
+            db.session.commit()
+            flash("Patient's data was successfully updated.")
+            return render_template("update.html", form=form, form_to_update=form_to_update)
+        
+        except Exception as exc: 
+            db.session.rollback()
+            print (exc)
+            flash("Sorry, patient doesn't exist",'danger')
+            return render_template("update.html", form=form, form_to_update=form_to_update)
+    else:
+        return render_template("update.html", form=form, form_to_update=form_to_update)
+    
+    
+    
 @login_manager.user_loader
 def load_user(doctorId):
     info = DoctorsProfile.query.filter_by(id=doctorId).first()

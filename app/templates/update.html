@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block main %}
+  <div class="login-form center-block">
+    <h2>Update Patient Info</h2>
+    {% include 'flash_messages.html' %}
+
+    <form action="/update/{{current_user.patientId}}" method="POST">
+      {{ form.csrf_token }}
+
+      <!-- patient ID
+      <div class="form-group">
+        {{ form.first_name.label(class = "form-control-label") }}
+        {{ form.first_name(class='form-control', placeholder="Patient ID") }}
+      </div>
+      -->
+
+      <div class="form-group">
+        {{ form.first_name.label(class = "form-control-label") }}
+        {{ form.first_name(class='form-control', value=form_to_update.first_name) }}
+      </div>
+
+      <div class="form-group">
+        {{ form.last_name.label(class = "form-control-label") }}
+        {{ form.last_name(class='form-control', value=form_to_update.last_name) }}
+      </div>
+
+      <div class="form-group">
+        {{ form.DOB.label(class = "form-control-label") }}
+        {{ form.DOB(class='form-control', value=form_to_update.DOB) }}
+      </div>
+
+      <div class="form-group">
+        {{ form.emailAddress.label(class = "form-control-label") }}
+        {{ form.emailAddress(class='form-control', value=form_to_update.emailAddress) }}
+      </div>
+
+      <div class="form-group">
+        {{ form.username.label(class = "form-control-label") }}
+        {{ form.username(class='form-control', value=form_to_update.username) }}
+      </div>
+      
+      <div class="form-group">
+        {{ form.password.label(class = "form-control-label") }}
+        {{ form.password(class='form-control', value=form_to_update.password) }}
+      </div>
+
+      <!--
+      <div class="form-group">
+        {{ form.confirm_password.label(class = "form-control-label") }}
+        {{ form.confirm_password(class='form-control') }}
+      </div>
+      -->
+
+      <button type="submit" name="submit" class="btn btn-primary btn-block">Update Info</button>
+    </form>
+  </div>
+{% endblock %}

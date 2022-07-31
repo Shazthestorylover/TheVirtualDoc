@@ -3,6 +3,7 @@ Flask Documentation:     http://flask.pocoo.org/docs/
 Jinja2 Documentation:    http://jinja.pocoo.org/2/documentation/
 Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 https://www.youtube.com/watch?v=CiuC5PF4I-A
+https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
 This file creates your application.
 """
 
@@ -25,10 +26,23 @@ def define_db():
     db.drop_all()
     db.create_all()
     try:
-        db.session.add()
+        #create a doctor user
+        doctor = DoctorsProfile(first_name = "Isaiah", last_name ="McIntyre", specialty = "Internal Medicine", title = "MD", phoneNumber = "876580-1512", emailAddress = "isaiahmcintyre@yahoo.com", companyName = "University Hospital of the West Indies", password="1234")
+        #create a patient user
+        patient = PatientsProfile(first_name="Dwayne", last_name="Johnson",DOB="07-04-1978", emailAddress="dwayne.johnson@gmail.com", username="Dwayne", password="1234")
+        #creata an appointment
+        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com")
+        #add relationships
+        doctor.appointments.append(appointment)
+
+        #add users and appointmnet to db
+        db.session.add(doctor)
+        db.session.add(patient)
+        db.session.add(appointment)
+        # commit
         db.session.commit()
     except Exception as exc:
-        db.rollback()
+        db.session.rollback()
         print(exc)
 
 events = [
@@ -53,6 +67,7 @@ def genid():
 @app.route('/')
 def home():
     """Render website's home page."""
+    define_db()
     return render_template('home.html', title ='Home')
 
 @app.route('/calendar')

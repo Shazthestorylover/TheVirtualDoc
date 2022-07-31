@@ -20,6 +20,17 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 
 
+
+def define_db():
+    db.drop_all()
+    db.create_all()
+    try:
+        db.session.add()
+        db.session.commit()
+    except Exception as exc:
+        db.rollback()
+        print(exc)
+
 events = [
     {
         'title' : 'Appointment1',

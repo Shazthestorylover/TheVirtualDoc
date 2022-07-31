@@ -215,9 +215,11 @@ def logout():
     return redirect(url_for('home'))
 
 # Update database record for patient info.
-@app.route("/update/<string:patientId>", methods=["GET", "POST"])
-@login_required
-def update_patient_record(patientId):
+# /<string:patientId>
+@app.route("/update", methods=["GET", "POST"])
+#@login_required
+def update_patient_record():
+    patientId = "1"
     
     # Get a form ()
     form = patientSignUpForm()
@@ -237,7 +239,7 @@ def update_patient_record(patientId):
         
             db.session.commit()
             flash("Patient's data was successfully updated.")
-            return render_template("update.html", form=form, form_to_update=form_to_update)
+            return render_template("update.html", form=form, form_to_update=form_to_update, User=current_user) #
         
         except Exception as exc: 
             db.session.rollback()
@@ -245,7 +247,7 @@ def update_patient_record(patientId):
             flash("Sorry, patient doesn't exist",'danger')
             return render_template("update.html", form=form, form_to_update=form_to_update)
     else:
-        return render_template("update.html", form=form, form_to_update=form_to_update)
+        return render_template("update.html", form=form, form_to_update=form_to_update, User=current_user)
     
     
     

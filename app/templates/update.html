@@ -1,3 +1,7 @@
+<!--
+  https://www.youtube.com/watch?v=Wicjkn5_nIQ
+-->
+
 {% extends "base.html" %}
 
 {% block main %}
@@ -5,7 +9,7 @@
     <h2>Update Patient Info</h2>
     {% include 'flash_messages.html' %}
 
-    <form action="/update/{{current_user.patientId}}" method="POST">
+    <form action="/update/1" method="POST">
       {{ form.csrf_token }}
 
       <!-- patient ID
@@ -56,3 +60,13 @@
     </form>
   </div>
 {% endblock %}
+
+
+
+{% block js%}
+<script>
+    let user = "{{User.first_name}}"
+    console.log(User);
+</script>
+{%endblock%}
+

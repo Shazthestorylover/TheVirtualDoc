@@ -2,7 +2,7 @@ import email
 from pydoc import doc
 from . import db
 from werkzeug.security import generate_password_hash
-from sqlalchemy import Table, Column, Integer, ForeignKey
+from sqlalchemy import Table, Column, Integer, ForeignKey, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -14,12 +14,6 @@ patient_list = db.Table(
         db.Column("pat_id", db.Integer, db.ForeignKey("patient_profiles.id"), primary_key=True),
 )
 
-"""doctor = Table(
-        "attendsTo",
-        Column("id", db.Integer, db.ForeignKey("id"), primary_key=True),
-        Column("id", db.Integer, db.ForeignKey("id"), primary_key=True),
-)
-"""
 class DoctorsProfile(db.Model):
     __tablename__ = 'doctor_profiles'
 
@@ -39,6 +33,9 @@ class DoctorsProfile(db.Model):
     #many to many relationship between doctor and patients
     patients=relationship("PatientsProfile", secondary=patient_list, backref="assigned_patient") # backref is for preferred classname for the table that is required
     
+    #one to many relationship with Doctor diagnosis
+    list_of_diagnosis = relationship("DoctorDiagnosis", backref="doctor_profiles", lazy="select")
+
     def __init__(self,first_name, last_name, specialty,
     title, phoneNumber, emailAddress, companyName, password):
         self.first_name = first_name
@@ -236,7 +233,14 @@ class PatientHistory(db.Model):
 
    #many patient_histories to one patient_record
     patient_record_id= db.Column(db.Integer, db.ForeignKey("patient_record.id"))
-
+    # one to one relationship between patient history and complaints
+    complaints=db.relationship("Complaints", backref="my_history", lazy="select", uselist=False)
+    # one to one relationship between patient history and symptoms
+    symptoms=db.relationship("Symptoms", backref="my_history", lazy="select", uselist=False)
+    # one to one relationship between patient history and possible causes
+    possible_causes=db.relationship("PossibleCauses", backref="my_history", lazy="select", uselist=False)
+    #one to one relationship between Patient history and Doctor Diagnosis
+    doctor_diagnosis=db.relationship("DoctorDiagnosis", backref="my_history", lazy="select", uselist=False)
 def __init__(self, age, height, weight, blood_pressure, blood_sugar, temperature):
         self.age = age
         self.height = height
@@ -264,4 +268,54 @@ def get_id(self):
 def __repr__(self):
     return '<PatientHistory %r>' % (self.id)
  
+
+class Symptoms(db.Model):
+    __tablename__= 'symptoms'
+    id = db.Column(db.Integer, primary_key=True)
+    list_of_symptoms = db.Column(db.JSON)
+
+# one to one relationship between patient history and symptoms
+    patient_history_id =db.Column(db.Integer, db.ForeignKey("patient_history.id"))
+def __init__(self, symptoms):
+        self.list_of_symptoms = symptoms
+
+class Complaints(db.Model):
+    __tablename__= 'complaints'
+    id = db.Column(db.Integer, primary_key=True)
+    list_of_complaints = db.Column(db.JSON)
+    # one to one relationship between patient history and complaints
+    patient_history_id =db.Column(db.Integer, db.ForeignKey("patient_history.id"))
+
+def __init__(self, complaints):
+        self.list_of_complaints = complaints
+
+class PossibleCauses(db.Model):
+    __tablename__= 'possible_causes'
+    id = db.Column(db.Integer, primary_key=True)
+    possible_causes = db.Column(db.JSON)
+
+# one to one relationship between patient history and possible_causes
+    patient_history_id =db.Column(db.Integer, db.ForeignKey("patient_history.id"))
+def __init__(self, causes):
+        self.possible_causes = causes
+
+class DoctorDiagnosis(db.Model):
+    __tablename__='doctor_diagnosis'
+    id = db.Column(db.Integer, primary_key=True)
+    history_id = db.Column(db.Integer, db.ForeignKey("patient_history.id"))
+    doc_id = db.Column(db.Integer, db.ForeignKey("doctor_profiles.id"))
+    diagnosis = db.Column(db.String(255))
+    prescription = db.Column(db.JSON)
+    filenames = db.Column(db.JSON)
+
+#one to one relationship with patient history
+#patient_history = relationship("PatientHistory", backref = backref("DoctorDiagnosis", uselist=False ))
+
+#many to one relationship with doctor
+
+def __init__(self, diagnosis, prescription, filenames):
+        self.diagnosis = diagnosis
+        self.prescription = prescription
+        self.filenames = filenames
+
 

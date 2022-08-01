@@ -18,8 +18,10 @@ from app.forms import patientSignUpForm, doctorSignUpForm, patientLoginForm, doc
 from app.models import *
 from flask_wtf.csrf import generate_csrf
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 from flask_sqlalchemy import SQLAlchemy
 import uuid
+from .forms import UploadForm
 
 
 isPatient=False
@@ -390,6 +392,26 @@ def flash_errors(form):
                 getattr(form, field).label.text,
                 error
             ), 'danger')
+
+@app.route('/upload', methods=['POST', 'GET'])
+def upload():
+    if not session.get('logged_in'):
+        abort(401)
+
+    # Instantiate your form class
+    imageForm = UploadForm()
+    
+    # Validate file upload on submit
+    if request.method == 'POST':
+        # Get file data and save to your uploads folder
+        image = imageForm.image.data
+        filename = secure_filename(image.filename)
+        image.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+
+        flash('File Saved', 'success')
+        return redirect(url_for('home'))
+
+    return render_template('uploads.html') 
 
 
 @app.route('/<file_name>.txt')

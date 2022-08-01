@@ -36,17 +36,31 @@ def define_db():
         patient_record = PatientRecord( patient_illness="Diabetic", medication= "insulin")
         # create patient history
         patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6)
-        
+        #create a complaint
+        complaints=Complaints(list_of_complaints=["Cough", "Headache", "Fever"])
+        #create a symptom
+        symptoms=Symptoms(list_of_symptoms=[["Yes","headache", "mild"], ["Yes", "Fever", "less than three days"]])
+        #create possible causes
+        possible_causes=PossibleCauses(possible_causes=[[0.57, "Common Cold"],[0.24, "COVID-19"]]) 
+        #create diagnosis
+        doctor_diagnosis=DoctorDiagnosis(diagnosis="Patient had Common Flu", prescription= ["DPH Elixir"], filename=[])
+
         #add relationships---
         #one to many relationship
         doctor.appointments.append(appointment)
         patient_record.patient_histories.append(patient_history1)
+        doctor.list_of_diagnosis.append(doctor_diagnosis)
 
         #one to one relationship
         patient.record=patient_record
-        
+        patient_history1.complaints=complaints
+        patient_history1.symptoms=symptoms
+        patient_history1.possible_causes=possible_causes
+        patient_history1.doctor_diagnosis=doctor_diagnosis
+
         #many to many reltionship
         doctor.patients.append(patient)
+        
 
         #many to one relationship
         appointment.assigned_patient=patient
@@ -58,6 +72,10 @@ def define_db():
         db.session.add(appointment)
         db.session.add(patient_history1)
         db.session.add(patient_record)
+        db.session.add(complaints)
+        db.session.add(symptoms)
+        db.session.add(possible_causes)
+        db.session.add(doctor_diagnosis)
         # commit
         db.session.commit()
         print("Loading pre-defined data...")
@@ -69,6 +87,12 @@ def define_db():
         print("Patient's age is: ", patient.record.patient_histories[0].age)
         print("Appointment is booked by; ", appointment.assigned_patient.username)
         print(appointment.assigned_patient.username, " ID is ", appointment.patient_profile_id)
+        print("Patient's complaints of: ", complaints.list_of_complaints)
+        print("Symptoms include: ", symptoms.list_of_symptoms[1] )
+        print("as well as: ", symptoms.list_of_symptoms[1][1], " ",symptoms.list_of_symptoms[1][2])
+        print("The possible diagnosis is ", possible_causes.possible_causes)
+        print("Patient Diagnosis from doctor: ",patient.record.patient_histories[0].doctor_diagnosis.diagnosis)
+        print("Designated doctor was Dr. : ",patient.record.patient_histories[0].doctor_diagnosis.doctor_profiles.last_name)
     except Exception as exc:
         db.session.rollback()
         print(exc)

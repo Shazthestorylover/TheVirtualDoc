@@ -84,11 +84,11 @@ class PatientsProfile(db.Model):
     password = db.Column(db.String(255))
 
     #one patient can have many appointment
-
+    
     #many to many relationship between patient and doctor
 
     #one to one relationship between patient_records and patient
-
+    record=db.relationship("PatientRecord", backref="my_patient", lazy="select", uselist=False)
     
     def __init__(self, first_name, last_name, DOB, emailAddress, username, password):
         self.first_name = first_name
@@ -127,10 +127,11 @@ class Appointment(db.Model):
     booked = db.Column(db.Boolean)
 
     #many appointments to one doctor
-    doctor_id = db.Column(Integer, ForeignKey("doctor_profiles.id"))
+    doctor_id = db.Column(db.Integer, db.ForeignKey("doctor_profiles.id"))
 
-    #one appointment to one patient
-
+    #many appointment to one patient
+    patient_profile_id = db.Column(db.Integer, db.ForeignKey("patient_profiles.id"))
+    assigned_patient = relationship("PatientsProfile", backref="appointments", lazy="select")
     def __init__(self, title, date, time, url, booked):
         self.title = title
         self.date = date
@@ -196,8 +197,10 @@ class PatientRecord(db.Model):
     medication = db.Column(db.String(255))
 
     #one to one relationship between patient_record and patient
+    patient_profile_id =db.Column(db.Integer, db.ForeignKey("patient_profiles.id"))
 
-    #one patient_record to many patient_history
+    #one patient_record to many patient_histories
+    patient_histories=relationship("PatientHistory", backref="patient_record", lazy="select")
 
     def __init__(self, patient_illness, medication):
         self.patient_illness = patient_illness
@@ -224,12 +227,15 @@ class PatientRecord(db.Model):
 class PatientHistory(db.Model):
     __tablename__ = 'patient_history'
     id = db.Column(db.Integer, primary_key=True)
-    age = db.Column(db.String(160))
-    height = db.Column(db.String(255))
-    weight = db.Column(db.String(255))
+    age = db.Column(db.Integer)
+    height = db.Column(db.Integer)
+    weight = db.Column(db.Integer)
     blood_pressure = db.Column(db.String(255))
     blood_sugar = db.Column(db.String(255))
-    temperature = db.Column(db.String(255))
+    temperature = db.Column(db.Float)
+
+   #many patient_histories to one patient_record
+    patient_record_id= db.Column(db.Integer, db.ForeignKey("patient_record.id"))
 
 def __init__(self, age, height, weight, blood_pressure, blood_sugar, temperature):
         self.age = age
@@ -238,6 +244,7 @@ def __init__(self, age, height, weight, blood_pressure, blood_sugar, temperature
         self.blood_pressure = blood_pressure
         self.blood_sugar = blood_sugar
         self.temperature = temperature
+
 
 def is_authenticated(self):
     return True
@@ -256,5 +263,5 @@ def get_id(self):
 
 def __repr__(self):
     return '<PatientHistory %r>' % (self.id)
-    #many patient_history to one patient_record
+ 
 

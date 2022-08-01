@@ -14,7 +14,7 @@ from flask import render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_user, logout_user, current_user
 from flask_login import login_required, LoginManager
 from app.forms import patientSignUpForm, doctorSignUpForm, patientLoginForm, doctorLoginForm, makeAppointment
-from app.models import DoctorsProfile, PatientsProfile, Appointment, AppointmentSchedule, PatientRecord
+from app.models import *
 from flask_wtf.csrf import generate_csrf
 from werkzeug.security import check_password_hash
 from flask_sqlalchemy import SQLAlchemy
@@ -30,17 +30,34 @@ def define_db():
         doctor = DoctorsProfile(first_name = "Isaiah", last_name ="McIntyre", specialty = "Internal Medicine", title = "MD", phoneNumber = "876580-1512", emailAddress = "isaiahmcintyre@yahoo.com", companyName = "University Hospital of the West Indies", password="1234")
         #create a patient user
         patient = PatientsProfile(first_name="Dwayne", last_name="Johnson",DOB="07-04-1978", emailAddress="dwayne.johnson@gmail.com", username="Dwayne", password="1234")
-        #creata an appointment
+        #creat an appointment
         appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com", booked = False)
-        #add relationships
+        #create a patient record
+        patient_record = PatientRecord( patient_illness="Diabetic", medication= "insulin")
+        # create patient history
+        patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6)
+        
+        #add relationships---
         #one to many relationship
         doctor.appointments.append(appointment)
+        patient_record.patient_histories.append(patient_history1)
+
+        #one to one relationship
+        patient.record=patient_record
+        
         #many to many reltionship
         doctor.patients.append(patient)
-        #add users and appointmnet to db
+
+        #many to one relationship
+        appointment.assigned_patient=patient
+        appointment.booked=True
+        
+        #add users and appointmnet to db----
         db.session.add(doctor)
         db.session.add(patient)
         db.session.add(appointment)
+        db.session.add(patient_history1)
+        db.session.add(patient_record)
         # commit
         db.session.commit()
         print("Loading pre-defined data...")
@@ -48,6 +65,10 @@ def define_db():
         print("doctor's first appointment is: ", doctor.appointments[0].date)
         print("doctor's first patient is: ", doctor.patients[0].first_name, " ", doctor.patients[0].last_name)
         print("Is the appointment booked? ", doctor.appointments[0].booked )
+        print("Patient's illness is: ", patient.record.patient_illness)
+        print("Patient's age is: ", patient.record.patient_histories[0].age)
+        print("Appointment is booked by; ", appointment.assigned_patient.username)
+        print(appointment.assigned_patient.username, " ID is ", appointment.patient_profile_id)
     except Exception as exc:
         db.session.rollback()
         print(exc)
@@ -221,6 +242,7 @@ def appointments():
     if request.method == "GET":
         first_name = form.first_name.data
     return render_template('appointments.html', form=form)
+
 
 @app.route("/logout")
 @login_required

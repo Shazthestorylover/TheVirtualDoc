@@ -32,7 +32,7 @@ class patientLoginForm(FlaskForm):
     emailAddress = StringField('Email', validators=[InputRequired(), Email()])
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
-   
+
 class doctorLoginForm(FlaskForm):
     emailAddress = StringField('Email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
@@ -46,5 +46,5 @@ class makeAppointment(FlaskForm):
     reason = TextAreaField('Reason for visit', validators=[InputRequired()])
     
 class UploadForm(FlaskForm):
-    image = FileField('Image', validators = [FileRequired(), FileAllowed(['jpg','png', 'pdf','Images only!'])])
+    file = FileField('file', validators = [FileRequired(), FileAllowed(['jpg','png', 'pdf'])])
     

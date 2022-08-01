@@ -31,16 +31,23 @@ def define_db():
         #create a patient user
         patient = PatientsProfile(first_name="Dwayne", last_name="Johnson",DOB="07-04-1978", emailAddress="dwayne.johnson@gmail.com", username="Dwayne", password="1234")
         #creata an appointment
-        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com")
+        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com", booked = False)
         #add relationships
+        #one to many relationship
         doctor.appointments.append(appointment)
-
+        #many to many reltionship
+        doctor.patients.append(patient)
         #add users and appointmnet to db
         db.session.add(doctor)
         db.session.add(patient)
         db.session.add(appointment)
         # commit
         db.session.commit()
+        print("Loading pre-defined data...")
+        print("doctor's first_name is: ", doctor.first_name)
+        print("doctor's first appointment is: ", doctor.appointments[0].date)
+        print("doctor's first patient is: ", doctor.patients[0].first_name, " ", doctor.patients[0].last_name)
+        print("Is the appointment booked? ", doctor.appointments[0].booked )
     except Exception as exc:
         db.session.rollback()
         print(exc)

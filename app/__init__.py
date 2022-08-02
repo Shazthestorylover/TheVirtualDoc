@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'patientlogin'
-login_manager.login_view = 'doclogin'
+#login_manager.login_view = 'doclogin'
 
 # Instantiate Flask-Migrate library here
 migrate = Migrate(app, db)

@@ -318,4 +318,7 @@ def __init__(self, diagnosis, prescription, filenames):
         self.prescription = prescription
         self.filenames = filenames
 
+def __repr__(self):
+        return '<DoctorDiagnosis %r>' % (self.id)
+
 

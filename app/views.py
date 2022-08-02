@@ -7,10 +7,11 @@ https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
 This file creates your application.
 """
 
+import re
 import uu
 from app import app, db, login_manager
 import os
-from flask import render_template, request, redirect, url_for, flash, jsonify
+from flask import render_template, request, redirect, url_for, flash, jsonify, session, abort
 from flask_login import login_user, logout_user, current_user
 from flask_login import login_required, LoginManager
 from app.forms import patientSignUpForm, doctorSignUpForm, patientLoginForm, doctorLoginForm, makeAppointment
@@ -21,7 +22,7 @@ from flask_sqlalchemy import SQLAlchemy
 import uuid
 
 
-
+isPatient=False
 
 def define_db():
     db.drop_all()
@@ -120,19 +121,57 @@ def genid():
 @app.route('/')
 def home():
     """Render website's home page."""
+    return render_template('home.html', title ='Home') 
+       
+@app.route('/db_create')
+def db_create():
     define_db()
-    return render_template('home.html', title ='Home')
+    return redirect(url_for('home'))
+
+@app.route("/getMyHistory")
+#@login_required
+def getMyHistory():
+    print(isPatient)
+    if(isPatient):
+        return render_template("getMyHistory.html", patient = current_user)
+    return render_template('404.html'), 401 
 
 @app.route('/calendar')
 def calendar():
     return render_template('calendar.html', events=events)
 
-@app.route('/setAppointment')
-def setAppointment():
-    return render_template('setAppointment.html', events=events)
+@app.route('/setAppointment/<int:doctor_id>', methods = ["GET", "POST"])
+def setAppointment(doctor_id):
+    if not isPatient:
+        return render_template('404.html')
+    var=Appointment.query.filter_by(doctor_id=doctor_id, booked=False)
+    print(var[0].title)
+    appointments=[]
+    for a in var:
+        appointments.append(a)
+    print(appointments)
+    if request.method == 'POST':
+        try:
+            print("attempting to get index ")
+            index=request.form["date"]
+            index=int(index)
+            print("index is: ", index)
+            selected_appointment=appointments[index]
+            print("selected appointment date was: ", selected_appointment.date)
+            #add patient to appointment
+            selected_appointment.assigned_patient=current_user
+            selected_appointment.booked=True
+            db.session.commit()
+            flash("Appointment made successfully!", 'success')
+            return redirect(url_for('patientpage'))
+        except Exception as exc:
+            print(exc)
+            flash("Unable to book appointment please try again!", 'danger')
+    return render_template('setAppointment.html', appointments=appointments, doctor_id=doctor_id)
 
-@app.route('/addAppointment', methods = ["GET", "POST"])
-def addAppointment():
+
+@app.route('/bookAppointment', methods = ["GET", "POST"])
+def bookAppointment():
     if request.method == "POST":
         title = request.form['title']
         start = request.form['start']
@@ -147,8 +186,16 @@ def addAppointment():
             'url' : url
         },
         )
-        flash("Appointment made", 'success')
-    return render_template('addAppointment.html')
+        try:
+            appointment =Appointment( title = title, date = start, time = end, url = url, booked = False)
+            current_user.appointments.append(appointment)
+            db.session.add(appointment)
+            db.session.commit()
+            flash("Appointment made", 'success')
+            return redirect(url_for("docpage"))
+        except Exception as exc:
+            flash("Error unable to creaate appointment, please try again", 'danger')
+    return render_template('bookAppointment.html', title='Book Appointments')
 
 @app.route('/about/')
 def about(): 
@@ -220,15 +267,18 @@ def doctorSignUp():
 
 @app.route("/doclogin", methods=["GET", "POST"])
 def doclogin():
+    global isPatient
     if current_user.is_authenticated:
         return render_template("loggedin.html",title = 'Already Logged In')
     form = doctorLoginForm()
-    if  form.validate_on_submit() and request.method =='POST':
+    if request.method =='POST':
         emailAddress = form.emailAddress.data
         password = form.password.data
         doctor = DoctorsProfile.query.filter_by(emailAddress = emailAddress).first()
         if doctor is not None and check_password_hash(doctor.password, password):
+            isPatient=False
             login_user(doctor)
+            #print("is the patient logged in: ", session['isPatient'])
             flash("You have been logged in!", 'success')
             return render_template('docpage.html', Title = "Welcome Doctor")
         else:
@@ -237,28 +287,31 @@ def doclogin():
 
 @app.route("/patientlogin", methods=["GET", "POST"])
 def patientlogin():
+    global isPatient
     print("Step 1")
     if current_user.is_authenticated:
         print("Step 2")
         return render_template("loggedin.html",title = 'Already Logged In')
     form = patientLoginForm()
     print("Step 3")
-    if  form.validate_on_submit() and request.method =='POST':
+    if request.method =='POST':
         print("Step 4")
         username = form.username.data
         emailAddress = form.emailAddress.data
         password = form.password.data
         patient = PatientsProfile.query.filter_by(username = username).first()
         if patient is not None and check_password_hash(patient.password, password):
+            isPatient=True
             print("Step 5")
             login_user(patient)
-            
+            print("This patient is: ", current_user)
+            print("is the patient logged in: ", isPatient)
             flash("You have been logged in!", 'success')
             return render_template('patientpage.html', Title = "Welcome patient")
         else:
-            print("Step 5")
+            print("Step 6")
             flash("Credentials does not match", 'danger')
-    print("Step 6")
+    print("Step 7")
     return render_template('patientlogin.html', form=form)
 
 @app.route("/appointments", methods=["GET", "POST"])
@@ -272,7 +325,9 @@ def appointments():
 @app.route("/logout")
 @login_required
 def logout():
+    global isPatient
     logout_user()
+    isPatient=False
     flash("You have been logged out!", 'success')
     return redirect(url_for('home'))
 
@@ -313,20 +368,15 @@ def update_patient_record(patientId=0):
             return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
     else:
         return render_template("update.html", form=form, form_field_to_update=form_field_to_update, User=current_user)
-    
-    
-    
-@login_manager.user_loader
-def load_user(doctorId):
-    info = DoctorsProfile.query.filter_by(id=doctorId).first()
-    if  info == None:
-        return PatientsProfile.query.filter_by(id=doctorId).first()
-    else:
-        return DoctorsProfile.query.filter_by(id=doctorId).first()
+   
 
-#@login_manager.user_loader
-#def load_user(patientId):
-  #  return PatientsProfile.query.get(int(patientId))
+@login_manager.user_loader
+def load_user(id):
+    if (isPatient):
+        return PatientsProfile.query.filter_by(id=id).first()
+    else:
+        return DoctorsProfile.query.filter_by(id=id,).first()
+
 ###
 # The functions below should be applicable to all Flask apps.
 ###

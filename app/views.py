@@ -24,6 +24,7 @@ import uuid
 
 isPatient=False
 
+
 def define_db():
     db.drop_all()
     db.create_all()

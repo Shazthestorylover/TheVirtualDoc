@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block css %}
+<style type="text/css">
+  body{
+    padding-top: 40px;
+  }
+  h1, p{
+    text-align:center;
+  }
+  h1{
+    font-size:64px;
+    margin:75px 0 50px;
+  }
+  p{
+    font-size:24px;
+    margin:15px 0;
+  }
+</style>
+{% endblock %}
+{% block main %}
+<h1>My History</h1>
+<div class="row">
+                {% for history in patient.record.patient_histories %}
+                <div class="row">
+                  <li>Visitation #{{history.id}}</li>
+                  <li>Age - {{history.age}}</li>
+                  <li>height - {{history.height}}</li>
+                  <li>weight - {{history.weight}}</li>
+                  <li>blood_pressure - {{history.blood_pressure}}</li>
+                  <li>blood_sugar - {{history.blood_sugar}}</li>
+                  <li>temperature - {{history.temperature}}</li>
+                 </div>
+                {% endfor %}
+</div>
+{% endblock %}

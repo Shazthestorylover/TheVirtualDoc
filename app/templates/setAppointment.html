@@ -5,29 +5,36 @@
 {% block main %}
     <div class="container">
         {% include 'flash_messages.html' %}
-        <form action="{{ url_for('setAppointment') }}" method="POST">
-            <div class='mb-3'>
+        <form action="{{ url_for('setAppointment', doctor_id=doctor_id) }}" method="POST">
+           <!-- <div class='mb-3'>
                 <label for="title" class="form-label"> Appointment title</label>
                 <input type="text" class="form-control" name="title" id="title">
-            </div>
+            </div>-->
             <div class='mb-3'>
-                <label for="start" class="form-label"> Select available date</label>
-                <select id ="Date"  class="form-control" name="date" id="date">
-                    {% for event in events %}
-                    <option value={{event.start}}>{{event.start}} </option>
+                <label for="date" class="form-label"> Select available date</label>
+                <select id ="date"  class="form-control" name="date">
+                    {% for appointment in appointments %}
+
+                    <option value={{appointments.index(appointment)}}>{{appointment.date}} </option>
                     {% endfor %}
+                    
                 </select>
             </div>
             <div class='mb-3'>
                 <label for="end" class="form-label"> End date</label>
                 <input type="text" class="form-control" name="end" id="end" placeholder="leave empty for event to be all day">
             </div>
-            <div class='mb-3'>
+            <!--<div class='mb-3'>
                 <label for="title" class="form-label"> Event url</label>
                 <input type="url" class="form-control" name="url" id="url" placeholder="Leave empty if no url">
-            </div>
+            </div>-->
             <button type="submit" class="btn btn-outline-dark">Submit</button>
         </form>
     </div>
     {% endblock%}
-    {% block js %} {% endblock%}
+    {% block js %} 
+    <script>
+    let e="{{ event }}"
+    console.log("Event", e.start);
+    </script>
+    {% endblock%}

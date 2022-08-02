@@ -43,7 +43,7 @@ def define_db():
         #create possible causes
         possible_causes=PossibleCauses(possible_causes=[[0.57, "Common Cold"],[0.24, "COVID-19"]]) 
         #create diagnosis
-        doctor_diagnosis=DoctorDiagnosis(diagnosis="Patient had Common Flu", prescription= ["DPH Elixir"], filename=[])
+        doctor_diagnosis=DoctorDiagnosis(diagnosis="Patient had Common Flu", prescription= ["DPH Elixir"], filenames=[])
 
         #add relationships---
         #one to many relationship

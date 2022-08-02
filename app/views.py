@@ -22,6 +22,7 @@ import uuid
 
 
 
+
 def define_db():
     db.drop_all()
     db.create_all()

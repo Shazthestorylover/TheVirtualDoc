@@ -1,0 +1,53 @@
+#main-home{
+	display:flex;
+	height:900px;
+	width:1200px;
+	background-color:#3a2b75;
+	flex-direction: row;
+	
+
+}
+
+
+#tagline-section {
+   
+	display: flex;
+	flex-direction:column;
+    align-self: center;
+    color: #ffffff;
+    font-weight: bolder;
+    font-size: 30px;
+    padding: 200px;
+	
+}
+
+#Caring-doctor>img{
+
+height:700px;
+width: 300px;
+padding-top:100px ;
+padding-right: 50px;
+align-self: flex-end;
+}
+
+
+#img-container{
+
+height:800px;
+width: 300px;
+
+
+}
+
+button{
+	width: 200px;
+	border-radius:2px;
+	border-style: solid;
+	background: none;
+	font-size:20px;
+}
+
+#homepage-header{
+
+	text-align: center;
+}

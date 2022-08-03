@@ -3,6 +3,9 @@
     set appointment
 {% endblock title %}
 {% block main %}
+<br>
+    <br>
+
     <div class="container">
         {% include 'flash_messages.html' %}
         <form action="{{ url_for('setAppointment', doctor_id=doctor_id) }}" method="POST">

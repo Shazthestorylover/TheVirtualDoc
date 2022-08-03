@@ -2,6 +2,9 @@
 
 {% block main %}
   <div class="login-form center-block">
+    <br>
+  <br>
+
     <h2>Please Log in</h2>
     {% include 'flash_messages.html' %}
     <form action="{{ url_for('patientlogin') }}" method="post">

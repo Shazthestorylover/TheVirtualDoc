@@ -1,0 +1,55 @@
+#main-home{
+	display:flex;
+	height:900px;
+	width:1200px;
+	background-color:#3a2b75;
+	flex-direction: row;
+	padding: 100px;
+	
+
+}
+
+
+#tagline-section {
+   
+	display: flex;
+	flex-direction:column;
+    align-self: center;
+    color: #ffffff;
+    font-weight: bolder;
+    font-size: 30px;
+    padding-right: 200px;
+	
+}
+
+/*#Caring-doctor>img{
+
+height:500px;
+width: auto;
+padding-top:100px ;
+padding-right: 50px;
+align-self: flex-end;
+object-fit: contain;
+}
+*/
+
+#img-container{
+background-image: url('../images/Doctor-Edited.png');
+background-size: 400px 700px;
+background-repeat: no-repeat;
+border-radius:50%;
+width: 100%;
+}
+
+button{
+	width: 200px;
+	border-radius:2px;
+	border-style: solid;
+	background: none;
+	font-size:20px;
+}
+
+#homepage-header{
+
+	text-align: center;
+}

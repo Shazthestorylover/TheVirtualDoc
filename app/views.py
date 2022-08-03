@@ -408,9 +408,9 @@ def upload():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         # call doctorDiagnosis() or patientDiagnosis() class and add the filename to it.
-        
+        #add_to_filename =  DoctorDiagnosis
         flash('File Saved', 'success')
-        return redirect(url_for('home')) # change from homepage to another page (e.g. give success msg and stay on the page) 
+        return redirect(url_for('uploads')) # change from homepage to another page (e.g. give success msg and stay on the page) 
 
     return render_template('uploads.html')
 

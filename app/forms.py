@@ -2,6 +2,7 @@ from calendar import MONDAY
 from datetime import datetime
 from random import choices
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms import StringField, PasswordField, DateField, TextAreaField, SelectField
 from wtforms.validators import InputRequired, Email, EqualTo
     
@@ -31,7 +32,7 @@ class patientLoginForm(FlaskForm):
     emailAddress = StringField('Email', validators=[InputRequired(), Email()])
     username = StringField('Username', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
-   
+
 class doctorLoginForm(FlaskForm):
     emailAddress = StringField('Email', validators=[InputRequired()])
     password = PasswordField('Password', validators=[InputRequired()])
@@ -43,4 +44,7 @@ class makeAppointment(FlaskForm):
     phoneNumber = StringField('Phone Number', validators=[InputRequired()])
     date = DateField('Date', format='%m/%d/%Y')
     reason = TextAreaField('Reason for visit', validators=[InputRequired()])
+    
+class UploadForm(FlaskForm):
+    file = FileField('file', validators = [FileRequired(), FileAllowed(['jpg','png', 'pdf'])])
     

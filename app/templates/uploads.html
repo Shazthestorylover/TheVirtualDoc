@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<h1 class="page-header">Upload Forms</h1>
+
+{% include 'flash_messages.html' %}
+
+{# Add the appropriate method and enctype attributes to the form tag to allow for file uploads #}
+<form method = "post" action="{{ url_for('uploads') }}" enctype = 'multipart/form-data'>
+
+  {# Add the file upload field as you learnt for Flask-WTF #}
+  {{form.csrf_token}}
+  {{form.file.label}}
+  {{form.file()}}
+
+  <button type="submit" name="submit" class="btn btn-primary">Upload file</button>
+</form>
+{% endblock %}

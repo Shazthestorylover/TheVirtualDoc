@@ -7,6 +7,7 @@ https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
 This file creates your application.
 """
 
+from datetime import datetime
 import re
 import uu
 from app import app, db, login_manager
@@ -40,7 +41,7 @@ def define_db():
         #create a patient record
         patient_record = PatientRecord( patient_illness="Diabetic", medication= "insulin")
         # create patient history
-        patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6)
+        patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6, visitation_date=datetime.now())
         #create a complaint
         complaints=Complaints(list_of_complaints=["Cough", "Headache", "Fever"])
         #create a symptom
@@ -98,6 +99,7 @@ def define_db():
         print("The possible diagnosis is ", possible_causes.possible_causes)
         print("Patient Diagnosis from doctor: ",patient.record.patient_histories[0].doctor_diagnosis.diagnosis)
         print("Designated doctor was Dr. : ",patient.record.patient_histories[0].doctor_diagnosis.doctor_profiles.last_name)
+        print("The date is", patient_history1.visitation_date)
     except Exception as exc:
         db.session.rollback()
         print(exc)
@@ -131,6 +133,44 @@ def db_create():
     define_db()
     return redirect(url_for('home'))
 
+@app.route('/showAvailableDoctors')
+@login_required
+def showAvailableDoctors():
+    if(isPatient):
+        doctors = DoctorsProfile.query.all()
+        return render_template("showDoctors.html", doctors = doctors)
+    return render_template('404.html'), 401
+
+
+@app.route('/viewPatientRecord/<int:patient_id>')
+def viewPatientRecord(patient_id):
+    try:
+        patient_record = PatientsProfile.query.filter_by(id=patient_id).first()
+        if patient_record is not None:
+            return render_template("viewPatientRecord.html", patient_record = patient_record.record)
+        flash("patient record was not found. Please try again later","danger")
+        redirect(url_for('home'))
+    except Exception as exc:
+        print(exc)
+        flash("Unable retrieve patient information. Please try again later","danger")
+        redirect(url_for('home'))
+    return render_template('404.html'), 401
+
+@app.route('/viewDoctorInfo/<int:doctor_id>')
+def viewDoctorInfo(doctor_id):
+    try:
+        doctor_info = DoctorsProfile.query.filter_by(id=doctor_id).first()
+        if doctor_info is not None:
+            return render_template("viewDoctorInfo.html", doctor_info = doctor_info)
+        flash("record was not found. Please try again later","danger")
+        redirect(url_for('home'))
+    except Exception as exc:
+        print(exc)
+        flash("Unable retrieve doctor information. Please try again later","danger")
+        redirect(url_for('home'))
+    return render_template('404.html'), 401
+
+
 @app.route("/getMyHistory")
 #@login_required
 def getMyHistory():
@@ -148,7 +188,7 @@ def setAppointment(doctor_id):
     if not isPatient:
         return render_template('404.html')
     var=Appointment.query.filter_by(doctor_id=doctor_id, booked=False)
-    print(var[0].title)
+    print(var)
     appointments=[]
     for a in var:
         appointments.append(a)
@@ -375,6 +415,9 @@ def update_patient_record(patientId=0):
 
 @login_manager.user_loader
 def load_user(id):
+    print("load manager was call")
+    print("the id is", id)
+    print("is Patient?", isPatient)
     if (isPatient):
         return PatientsProfile.query.filter_by(id=id).first()
     else:

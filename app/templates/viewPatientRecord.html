@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block css %}
+<style type="text/css">
+  body{
+    padding-top: 40px;
+  }
+  h1, p{
+    text-align:center;
+  }
+  h1{
+    font-size:64px;
+    margin:75px 0 50px;
+  }
+  p{
+    font-size:24px;
+    margin:15px 0;
+  }
+  </style> 
+<style>
+.button {
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #4CAF50;
+}
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+.button2 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+</style>
+{% endblock %}
+{% block main %}
+<h1>Patient Information</h1>
+<div class="row">
+                <div class="row">
+                  <h3> General </h3>
+                  <Strong>First name: </Strong>{{patient_record.my_patient.first_name}}
+                  <Strong>Last name: </Strong>{{patient_record.my_patient.last_name}}
+                  <Strong>Email:  </Strong>{{patient_record.my_patient.emailAddress}}
+                </div>
+                <div class="row">
+                  <h3> Medical History </h3>
+                  <Strong>Last known illnesses: </Strong>{{patient_record.patient_illness}}
+                  <Strong>Last known medication(s): </Strong>{{patient_record.medication}}
+                </div>
+                <h3> Visitations </h3>
+                {% for history in patient_record.patient_histories %}
+                <div class=" row ">
+                  <li>Visitation {{history.id}}  - {{history.visitation_date}}</li>
+                  <button class="button button2" type = "button" onclick="getInfo({{history.id}})">View History</button>
+                </div>
+                {% endfor %}
+</div>
+
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Irregularities</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+            <p id = "s"></p>
+        ...
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick = "RejectStudent();">Reject</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick = "AdmitStudent();">Admit</button>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    let patient_histories[]="{{ patient_record.patient_histories }}"
+    console.log(patient_histories[0].weight)
+    function getInfo(sid){
+            //current_student = sid;
+            console.log(sid);
+            //console.log(info[`${sid}`]); //[parseInt(sid)]
+            //alert(info[`${sid}`].by);
+            //ID number scanned: "No Matched"
+            // Name scanned: "No Matched"
+            // Organization scanned: "No Matched"
+            // ScannedID_Link: "https://firebasestorage.googleapis.com/v0/b/online-exam-proctor.appspot.com/o/exam%2FTEST%201001%2Firregularities%2FrequestAdmission%2FscanID.pngWUE7U?alt=media"
+            // Type: "Unsuccesful Authentication"
+            // by: "Oshea Campbell"
+            // occurrance: "2021-05-16T01:29:53.557Z"
+            // organization: "The University of the West Indies"
+            // organization ID: "620119632"
+            //document.getElementsByClassName("modal-body")[0].innerHTML = "" + `<a href = '${info[sid].ScannedID_Link}' target="_blank"> click to view image scanned </a>` + "<br>" 
+            // + "Result Scanned:" +"<br>"
+            // + "ID Scanned: " + info[`${sid}`].ID_number_scanned + "<br>"
+            // + "Name Scanned: "+ info[`${sid}`].Name_scanned + "<br>"
+            // + "Organization Scanned: "+ info[`${sid}`].Organization_scanned + "<br>"
+            // + "Information about irregularity:" +"<br>"
+            // + "Irregularity Type: "+ info[`${sid}`].Type + "<br>"
+            // + "Time of Occurance:" + info[`${sid}`].occurrance + "<br>"
+            // + "User logged in:" + info[`${sid}`].by + "<br>"
+            // + "User organization:" + info[`${sid}`].organization + "<br>"
+            // + "User known organization ID:" + info[`${sid}`].organization_ID + "<br>"; //info[`${sid}`].by;
+    }
+</script>
+{% endblock %}

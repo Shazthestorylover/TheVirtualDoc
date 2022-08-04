@@ -26,6 +26,7 @@ class DoctorsProfile(db.Model):
     emailAddress = db.Column(db.String(160), unique =True)
     companyName  = db.Column(db.String(80))
     password = db.Column(db.String(255))
+    isPatient = db.Column(db.Boolean, default=False)
 
     # one doctor to many appointments
     appointments=relationship("Appointment", backref="doctor_profiles", lazy="select")
@@ -79,6 +80,7 @@ class PatientsProfile(db.Model):
     emailAddress = db.Column(db.String(160))
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(255))
+    isPatient = db.Column(db.Boolean, default=True)
 
     #one patient can have many appointment
     

@@ -48,6 +48,32 @@
   color: white;
 }
 </style>
+<!-- css for dropdown -->
+<style>
+.accordion {
+    background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: 2px solid #008CBA;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+.active, .accordion:hover {
+    background-color: #008CBA;
+    color: white;
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+</style>
 {% endblock %}
 {% block main %}
 <h1>Patient Information</h1>
@@ -66,63 +92,40 @@
                 <h3> Visitations </h3>
                 {% for history in patient_record.patient_histories %}
                 <div class=" row ">
-                  <li>Visitation {{history.id}}  - {{history.visitation_date}}</li>
-                  <button class="button button2" type = "button" onclick="getInfo({{history.id}})">View History</button>
+                <button class="accordion">Visitation {{history.id}}  - {{history.visitation_date}}</button>
+<div class="panel">
+<li>Age: {{history.age}}</li>
+<li>Height: {{history.height}}</li>
+<li>Weight: {{history.weight}}</li>
+<li>Blood Pressure: {{history.blood_pressure}}</li>
+<li>Blood Sugar: {{history.blood_sugar}}</li>
+<li>Temperature: {{history.temperature}}</li>
+<li>Compliants: {{history.complaints.list_of_complaints}}</li>
+<li>Symptoms: {{history.symptoms.list_of_symptoms}}</li>
+<li>Possible Causes: {{history.possible_causes.possible_causes}}</li>
+<li>Doctor's Diagnosis: {{history.doctor_diagnosis.diagnosis}}</li>
+<li>Prescribed Medication: {{history.doctor_diagnosis.prescription}}</li>
+</div>
                 </div>
                 {% endfor %}
 </div>
-
-
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Irregularities</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        <div class="modal-body">
-            <p id = "s"></p>
-        ...
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick = "RejectStudent();">Reject</button>
-        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick = "AdmitStudent();">Admit</button>
-        </div>
-    </div>
-    </div>
-</div>
+<!--html for dropdown -->
+<!-- end for dropdown -->
 {% endblock %}
 {% block js %}
 <script>
-    let patient_histories[]="{{ patient_record.patient_histories }}"
-    console.log(patient_histories[0].weight)
-    function getInfo(sid){
-            //current_student = sid;
-            console.log(sid);
-            //console.log(info[`${sid}`]); //[parseInt(sid)]
-            //alert(info[`${sid}`].by);
-            //ID number scanned: "No Matched"
-            // Name scanned: "No Matched"
-            // Organization scanned: "No Matched"
-            // ScannedID_Link: "https://firebasestorage.googleapis.com/v0/b/online-exam-proctor.appspot.com/o/exam%2FTEST%201001%2Firregularities%2FrequestAdmission%2FscanID.pngWUE7U?alt=media"
-            // Type: "Unsuccesful Authentication"
-            // by: "Oshea Campbell"
-            // occurrance: "2021-05-16T01:29:53.557Z"
-            // organization: "The University of the West Indies"
-            // organization ID: "620119632"
-            //document.getElementsByClassName("modal-body")[0].innerHTML = "" + `<a href = '${info[sid].ScannedID_Link}' target="_blank"> click to view image scanned </a>` + "<br>" 
-            // + "Result Scanned:" +"<br>"
-            // + "ID Scanned: " + info[`${sid}`].ID_number_scanned + "<br>"
-            // + "Name Scanned: "+ info[`${sid}`].Name_scanned + "<br>"
-            // + "Organization Scanned: "+ info[`${sid}`].Organization_scanned + "<br>"
-            // + "Information about irregularity:" +"<br>"
-            // + "Irregularity Type: "+ info[`${sid}`].Type + "<br>"
-            // + "Time of Occurance:" + info[`${sid}`].occurrance + "<br>"
-            // + "User logged in:" + info[`${sid}`].by + "<br>"
-            // + "User organization:" + info[`${sid}`].organization + "<br>"
-            // + "User known organization ID:" + info[`${sid}`].organization_ID + "<br>"; //info[`${sid}`].by;
-    }
+var acc = document.getElementsByClassName("accordion");
+var i;
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  });
+}
 </script>
 {% endblock %}

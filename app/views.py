@@ -37,7 +37,7 @@ def define_db():
         #create a patient user
         patient = PatientsProfile(first_name="Dwayne", last_name="Johnson",DOB="07-04-1978", emailAddress="dwayne.johnson@gmail.com", username="Dwayne", password="1234")
         #creat an appointment
-        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com", booked = False)
+        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "9:00", url = "https://meet.google.com", booked = False)
         #create a patient record
         patient_record = PatientRecord( patient_illness="Diabetic", medication= "insulin")
         # create patient history
@@ -107,14 +107,14 @@ def define_db():
 events = [
     {
         'title' : 'Appointment1',
-        'start' : '2022-08-04',
-        'end' : '',
+        'date' : '2022-08-04',
+        'time' : '9:00am',
         'url' : 'https://us04web.zoom.us/j/77327765484?pwd=xPWo9HCwMgCHw5AmCpPKcwdjxI6JUr.1'
     },
     {
         'title' : 'Appointment2',
-        'start' : '2022-08-04',
-        'end' : '2022-08-05',
+        'date' : '2022-08-04',
+        'time' : '11:00am',
         'url' : 'https://meet.google.com/yxh-sbub-wpj'
     },
 ]
@@ -139,6 +139,13 @@ def showAvailableDoctors():
     if(isPatient):
         doctors = DoctorsProfile.query.all()
         return render_template("showDoctors.html", doctors = doctors)
+    return render_template('404.html'), 401
+
+@app.route('/showMyPatients')
+@login_required
+def showMyPatients():
+    if (not current_user.isPatient):
+        return render_template("showMyPatients.html", my_patients = current_user.patients)
     return render_template('404.html'), 401
 
 
@@ -182,6 +189,22 @@ def getMyHistory():
 @app.route('/calendar')
 def calendar():
     return render_template('calendar.html', events=events)
+
+@app.route('/patientCalendar')
+def patientCalendar():
+    if(isPatient):
+        ev=[]
+        for event in current_user.appointments:
+            ev.append({
+                'title' : event.title,
+                'date' : event.date,
+                'time' : event.time,
+                'url' : event.url
+            },
+        )
+        print("Patient appointmet", ev)
+        return render_template("patientCalendar.html", events=ev)
+    return render_template('home.html')
 
 @app.route('/setAppointment/<int:doctor_id>', methods = ["GET", "POST"])
 def setAppointment(doctor_id):
@@ -245,7 +268,7 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', title ='About')
 
-@app.route('/chat/')
+@app.route('/chat')
 def chat(): 
     """Render the website's chatbot page."""
     return render_template('patientpage.html', title ='Chat')
@@ -308,6 +331,10 @@ def doctorSignUp():
         flash("Please check form information and try again")
     return render_template('doctorSignUp.html', form=form)
 
+@app.route("/docpage")
+def docpage():
+    return render_template("docpage.html", Title = "Welcome Dr " + current_user.last_name)
+
 @app.route("/doclogin", methods=["GET", "POST"])
 def doclogin():
     global isPatient
@@ -323,7 +350,7 @@ def doclogin():
             login_user(doctor)
             #print("is the patient logged in: ", session['isPatient'])
             flash("You have been logged in!", 'success')
-            return render_template('docpage.html', Title = "Welcome Doctor")
+            return render_template('docpage.html', Title = "Welcome Dr " + current_user.last_name)
         else:
             flash("Credentials does not match", 'danger')
     return render_template('doclogin.html', form=form)

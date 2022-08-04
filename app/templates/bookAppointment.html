@@ -3,6 +3,9 @@
     Book appointment
 {% endblock title %}
 {% block main %}
+<br>
+    <br>
+
     <div class="container">
         <form action="{{ url_for('bookAppointment') }}" method="POST">
             {% include 'flash_messages.html' %}

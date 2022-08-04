@@ -1,7 +1,62 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h1 class="page-header">The VirtualDoc</h1>
-<p class="lead">Use this platform for doctor's appointments<br/>
-All you get are these files and mostly barebones HTML/CSS files.</p>
+
+
+
+
+
+
+
+<head>
+	
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/home.css') }}">
+
+</head>
+	<br>
+	<br>
+
+	<h1  id='homepage-header' class="page-header"> Welcome to the VirtualDoc,your online assistant!</h1>	
+
+		<div id='main-home'>
+
+
+
+			<div id='tagline-section'>
+
+				<div>Saving lives with the latest cutting egde technology and extremely caring staff </div>
+
+			
+
+
+			</div >
+
+			
+ 
+			<div id='img-container' label='caring-doc'>
+
+				<img src='../static/images/mandoclrg.png' label='Caring-doctor'> </img>
+			<!-- <div id='Caring-doctor'>
+
+				<img src='../static/images/mandoclrg.png' label='Caring-doctor'> </img>
+
+				<br>
+				<br>
+				
+
+				mg src= label='Caring-doctor'</img> 
+
+			</div> 
+			--> 
+
+
+
+
+		</div>
+
+
+
+</div>
+
+
 {% endblock %}

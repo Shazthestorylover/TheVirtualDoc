@@ -1,0 +1,36 @@
+#app-logo img{
+
+
+	border:none;
+	border-radius: 50%;
+	width:150px;
+	height:100px;
+
+}
+
+
+button{
+	width:200px;
+	border-radius:10px;
+	border-style: solid;
+	background-color:#d12e6a;
+	font-size:20px;
+	color:white;
+	font-weight: bold;
+}
+
+
+
+nav{
+	
+	height:110px;
+	
+}
+
+
+ul li{
+
+	margin-top: 20px;
+	font-size:20px;
+	font-weight: bold;
+}

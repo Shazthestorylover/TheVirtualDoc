@@ -1,0 +1,73 @@
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.bg-img-container{
+  padding-right:100px;
+  padding-top: 20px;
+
+}
+
+
+.page-container{
+
+padding-top:20px;
+
+
+}
+
+section{
+  margin-top:30px;
+  font-weight: bold;
+}
+
+
+.bg-img {
+
+  background-image: url('../images/operating-doc.png');
+  /* Full height */
+  
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size:100% 500px;
+  height:300px;
+  width: 110%;
+
+  
+
+}
+
+
+
+.bg-text {
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+  color: white;
+  font-weight: bold;
+  font-size: 50px;
+  /*border: 10px solid #f1f1f1;*/
+  position: absolute; /* Stay fixed */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 300px;
+  padding: 20px;
+  text-align: center;
+}
+
+
+
+
+
+
+
+

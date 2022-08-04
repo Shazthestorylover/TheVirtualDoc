@@ -1,9 +1,42 @@
 {% extends "base.html" %}
 
 {% block main %}
-<h1 class="page-header">About Us</h1>
-<h2> Vision</h2>
-<p>Creating a Healthy Jamaica for Everyone</p>
-<h3> Mission </h3>
-<p> Relevan and Accessible Health Care</p>
+
+
+<head>
+	
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/about.css') }}">
+
+<div class='page-container'>
+
+			<div class= 'bg-img-container'>
+					<div class='bg-img'></div>
+
+			</div>
+
+			<h1 class="bg-text">About Us</h1>
+
+
+
+			<div class="Vision-Mission">
+
+					<section id='Vision'>      
+							<h2> Vision</h2>
+							<p>Creating a Healthier world,one step at a time</p>
+							
+					</section>
+
+
+					<section id="Mission">      
+							<h2> Mission</h2>
+							<p>Using technology to aid in the provision of top-of-the-line world class healthcare that is <em>Reliable and accessible</em> to everyone</p>
+							
+					</section>
+
+
+			</div>
+
+
+
+</div>
 {% endblock %}

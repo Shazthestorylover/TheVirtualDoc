@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block css %}
+<style type="text/css">
+  body{
+    padding-top: 40px;
+  }
+  h1, p{
+    text-align:center;
+  }
+  h1{
+    font-size:64px;
+    margin:75px 0 50px;
+  }
+  p{
+    font-size:24px;
+    margin:15px 0;
+  }
+  </style> 
+<style>
+.button {
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #4CAF50;
+}
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+.button2 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+</style>
+<!-- css for dropdown -->
+<style>
+.accordion {
+    background-color: white;
+  color: black;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: 2px solid #008CBA;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+.active, .accordion:hover {
+    background-color: #008CBA;
+    color: white;
+}
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+</style>
+{% endblock %}
+{% block main %}
+<h1>Patient Information</h1>
+<div class="row">
+                <div class="row">
+                  <h3> General </h3>
+                  <Strong>First name: </Strong>{{patient_record.my_patient.first_name}}
+                  <Strong>Last name: </Strong>{{patient_record.my_patient.last_name}}
+                  <Strong>Email:  </Strong>{{patient_record.my_patient.emailAddress}}
+                </div>
+                <div class="row">
+                  <h3> Medical History </h3>
+                  <Strong>Last known illnesses: </Strong>{{patient_record.patient_illness}}
+                  <Strong>Last known medication(s): </Strong>{{patient_record.medication}}
+                </div>
+                <h3> Visitations </h3>
+                {% for history in patient_record.patient_histories %}
+                <div class=" row ">
+                <button class="accordion">Visitation {{history.id}}  - {{history.visitation_date}}</button>
+<div class="panel">
+<li>Age: {{history.age}}</li>
+<li>Height: {{history.height}}</li>
+<li>Weight: {{history.weight}}</li>
+<li>Blood Pressure: {{history.blood_pressure}}</li>
+<li>Blood Sugar: {{history.blood_sugar}}</li>
+<li>Temperature: {{history.temperature}}</li>
+<li>Compliants: {{history.complaints.list_of_complaints}}</li>
+<li>Symptoms: {{history.symptoms.list_of_symptoms}}</li>
+<li>Possible Causes: {{history.possible_causes.possible_causes}}</li>
+<li>Doctor's Diagnosis: {{history.doctor_diagnosis.diagnosis}}</li>
+<li>Prescribed Medication: {{history.doctor_diagnosis.prescription}}</li>
+</div>
+                </div>
+                {% endfor %}
+</div>
+<!--html for dropdown -->
+<!-- end for dropdown -->
+{% endblock %}
+{% block js %}
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  });
+}
+</script>
+{% endblock %}

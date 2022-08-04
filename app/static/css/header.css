@@ -3,13 +3,13 @@
 
 	border:none;
 	border-radius: 50%;
-	width:150px;
+	width:100px;
 	height:100px;
 
 }
 
 
-button{
+/*button{
 	width:200px;
 	border-radius:10px;
 	border-style: solid;
@@ -21,11 +21,11 @@ button{
 
 
 
-nav{
+/*nav{
 	
 	height:110px;
 	
-}
+}*/
 
 
 ul li{

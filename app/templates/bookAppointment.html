@@ -10,16 +10,16 @@
         <form action="{{ url_for('bookAppointment') }}" method="POST">
             {% include 'flash_messages.html' %}
             <div class='mb-3'>
-                <label for="title" class="form-label"> Appointment title</label>
+                <label for="title" class="form-label"> Appointment Title</label>
                 <input type="text" class="form-control" name="title" id="title">
             </div>
             <div class='mb-3'>
-                <label for="start" class="form-label"> Start date</label>
-                <input type="text" class="form-control" name="start" id="start" placeholder="Format is yy-mm-ddThh:mm Ignore Thh:mm if you need it for all day">
+                <label for="date" class="form-label">  Date</label>
+                <input type="text" class="form-control" name="date" id="date" placeholder="Format is yy-mm-ddThh:mm Ignore Thh:mm if you need it for all day">
             </div>
             <div class='mb-3'>
-                <label for="end" class="form-label"> End date</label>
-                <input type="text" class="form-control" name="end" id="end" placeholder="leave empty for event to be all day">
+                <label for="time" class="form-label"> Time</label>
+                <input type="text" class="form-control" name="time" id="time" placeholder="leave empty for event to be all day">
             </div>
             <div class='mb-3'>
                 <label for="title" class="form-label"> Event url</label>

@@ -26,6 +26,7 @@ class DoctorsProfile(db.Model):
     emailAddress = db.Column(db.String(160), unique =True)
     companyName  = db.Column(db.String(80))
     password = db.Column(db.String(255))
+    isPatient = db.Column(db.Boolean, default=False)
 
     # one doctor to many appointments
     appointments=relationship("Appointment", backref="doctor_profiles", lazy="select")
@@ -79,6 +80,7 @@ class PatientsProfile(db.Model):
     emailAddress = db.Column(db.String(160))
     username = db.Column(db.String(80), unique=True)
     password = db.Column(db.String(255))
+    isPatient = db.Column(db.Boolean, default=True)
 
     #one patient can have many appointment
     
@@ -230,6 +232,7 @@ class PatientHistory(db.Model):
     blood_pressure = db.Column(db.String(255))
     blood_sugar = db.Column(db.String(255))
     temperature = db.Column(db.Float)
+    visitation_date = db.Column(db.DateTime)
 
    #many patient_histories to one patient_record
     patient_record_id= db.Column(db.Integer, db.ForeignKey("patient_record.id"))
@@ -241,13 +244,14 @@ class PatientHistory(db.Model):
     possible_causes=db.relationship("PossibleCauses", backref="my_history", lazy="select", uselist=False)
     #one to one relationship between Patient history and Doctor Diagnosis
     doctor_diagnosis=db.relationship("DoctorDiagnosis", backref="my_history", lazy="select", uselist=False)
-def __init__(self, age, height, weight, blood_pressure, blood_sugar, temperature):
+def __init__(self, age, height, weight, blood_pressure, blood_sugar, temperature, visitation_date):
         self.age = age
         self.height = height
         self.weight = weight
         self.blood_pressure = blood_pressure
         self.blood_sugar = blood_sugar
         self.temperature = temperature
+        self.visitation_date = visitation_date
 
 
 def is_authenticated(self):

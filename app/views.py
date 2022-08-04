@@ -7,6 +7,7 @@ https://docs.sqlalchemy.org/en/14/orm/basic_relationships.html
 This file creates your application.
 """
 
+from datetime import datetime
 import re
 import uu
 from app import app, db, login_manager
@@ -36,11 +37,11 @@ def define_db():
         #create a patient user
         patient = PatientsProfile(first_name="Dwayne", last_name="Johnson",DOB="07-04-1978", emailAddress="dwayne.johnson@gmail.com", username="Dwayne", password="1234")
         #creat an appointment
-        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "", url = "https://meet.google.com", booked = False)
+        appointment =Appointment( title = "Appointment1", date = "2022-09-09", time = "9:00", url = "https://meet.google.com", booked = False)
         #create a patient record
         patient_record = PatientRecord( patient_illness="Diabetic", medication= "insulin")
         # create patient history
-        patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6)
+        patient_history1=PatientHistory(age=53, height=166, weight=210, blood_pressure="160/180", blood_sugar="200 mg/dl", temperature=98.6, visitation_date=datetime.now())
         #create a complaint
         complaints=Complaints(list_of_complaints=["Cough", "Headache", "Fever"])
         #create a symptom
@@ -98,6 +99,7 @@ def define_db():
         print("The possible diagnosis is ", possible_causes.possible_causes)
         print("Patient Diagnosis from doctor: ",patient.record.patient_histories[0].doctor_diagnosis.diagnosis)
         print("Designated doctor was Dr. : ",patient.record.patient_histories[0].doctor_diagnosis.doctor_profiles.last_name)
+        print("The date is", patient_history1.visitation_date)
     except Exception as exc:
         db.session.rollback()
         print(exc)
@@ -105,14 +107,14 @@ def define_db():
 events = [
     {
         'title' : 'Appointment1',
-        'start' : '2022-08-04',
-        'end' : '',
+        'date' : '2022-08-04',
+        'time' : '9:00am',
         'url' : 'https://us04web.zoom.us/j/77327765484?pwd=xPWo9HCwMgCHw5AmCpPKcwdjxI6JUr.1'
     },
     {
         'title' : 'Appointment2',
-        'start' : '2022-08-04',
-        'end' : '2022-08-05',
+        'date' : '2022-08-04',
+        'time' : '11:00am',
         'url' : 'https://meet.google.com/yxh-sbub-wpj'
     },
 ]
@@ -131,6 +133,51 @@ def db_create():
     define_db()
     return redirect(url_for('home'))
 
+@app.route('/showAvailableDoctors')
+@login_required
+def showAvailableDoctors():
+    if(isPatient):
+        doctors = DoctorsProfile.query.all()
+        return render_template("showDoctors.html", doctors = doctors)
+    return render_template('404.html'), 401
+
+@app.route('/showMyPatients')
+@login_required
+def showMyPatients():
+    if (not current_user.isPatient):
+        return render_template("showMyPatients.html", my_patients = current_user.patients)
+    return render_template('404.html'), 401
+
+
+@app.route('/viewPatientRecord/<int:patient_id>')
+def viewPatientRecord(patient_id):
+    try:
+        patient_record = PatientsProfile.query.filter_by(id=patient_id).first()
+        if patient_record is not None:
+            return render_template("viewPatientRecord.html", patient_record = patient_record.record)
+        flash("patient record was not found. Please try again later","danger")
+        redirect(url_for('home'))
+    except Exception as exc:
+        print(exc)
+        flash("Unable retrieve patient information. Please try again later","danger")
+        redirect(url_for('home'))
+    return render_template('404.html'), 401
+
+@app.route('/viewDoctorInfo/<int:doctor_id>')
+def viewDoctorInfo(doctor_id):
+    try:
+        doctor_info = DoctorsProfile.query.filter_by(id=doctor_id).first()
+        if doctor_info is not None:
+            return render_template("viewDoctorInfo.html", doctor_info = doctor_info)
+        flash("record was not found. Please try again later","danger")
+        redirect(url_for('home'))
+    except Exception as exc:
+        print(exc)
+        flash("Unable retrieve doctor information. Please try again later","danger")
+        redirect(url_for('home'))
+    return render_template('404.html'), 401
+
+
 @app.route("/getMyHistory")
 #@login_required
 def getMyHistory():
@@ -143,12 +190,28 @@ def getMyHistory():
 def calendar():
     return render_template('calendar.html', events=events)
 
+@app.route('/patientCalendar')
+def patientCalendar():
+    if(isPatient):
+        ev=[]
+        for event in current_user.appointments:
+            ev.append({
+                'title' : event.title,
+                'date' : event.date,
+                'time' : event.time,
+                'url' : event.url
+            },
+        )
+        print("Patient appointmet", ev)
+        return render_template("patientCalendar.html", events=ev)
+    return render_template('home.html')
+
 @app.route('/setAppointment/<int:doctor_id>', methods = ["GET", "POST"])
 def setAppointment(doctor_id):
     if not isPatient:
         return render_template('404.html')
     var=Appointment.query.filter_by(doctor_id=doctor_id, booked=False)
-    print(var[0].title)
+    print(var)
     appointments=[]
     for a in var:
         appointments.append(a)
@@ -205,7 +268,7 @@ def about():
     """Render the website's about page."""
     return render_template('about.html', title ='About')
 
-@app.route('/chat/')
+@app.route('/chat')
 def chat(): 
     """Render the website's chatbot page."""
     return render_template('patientpage.html', title ='Chat')
@@ -268,6 +331,10 @@ def doctorSignUp():
         flash("Please check form information and try again")
     return render_template('doctorSignUp.html', form=form)
 
+@app.route("/docpage")
+def docpage():
+    return render_template("docpage.html", Title = "Welcome Dr " + current_user.last_name)
+
 @app.route("/doclogin", methods=["GET", "POST"])
 def doclogin():
     global isPatient
@@ -283,7 +350,7 @@ def doclogin():
             login_user(doctor)
             #print("is the patient logged in: ", session['isPatient'])
             flash("You have been logged in!", 'success')
-            return render_template('docpage.html', Title = "Welcome Doctor")
+            return render_template('docpage.html', Title = "Welcome Dr " + current_user.last_name)
         else:
             flash("Credentials does not match", 'danger')
     return render_template('doclogin.html', form=form)
@@ -375,6 +442,9 @@ def update_patient_record(patientId=0):
 
 @login_manager.user_loader
 def load_user(id):
+    print("load manager was call")
+    print("the id is", id)
+    print("is Patient?", isPatient)
     if (isPatient):
         return PatientsProfile.query.filter_by(id=id).first()
     else:

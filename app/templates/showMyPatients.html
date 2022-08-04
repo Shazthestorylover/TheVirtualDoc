@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block css %}
+<style type="text/css">
+  body{
+    padding-top: 40px;
+  }
+  h1, p{
+    text-align:center;
+  }
+  h1{
+    font-size:64px;
+    margin:75px 0 50px;
+  }
+  p{
+    font-size:24px;
+    margin:15px 0;
+  }
+  </style> 
+<style>
+.button {
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+.button1 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #4CAF50;
+}
+.button1:hover {
+  background-color: #4CAF50;
+  color: white;
+}
+.button2 {
+  background-color: white; 
+  color: black; 
+  border: 2px solid #008CBA;
+}
+.button2:hover {
+  background-color: #008CBA;
+  color: white;
+}
+</style>
+{% endblock %}
+{% block main %}
+<h1>Available Doctors</h1>
+<div class="row">
+                {% for patient in my_patients %}
+                <div class=" row ">
+                  <li>Dr. {{patient.first_name}} {{patient.last_name}} </li>
+                  <form action="{{ url_for('viewPatientRecord', patient_id = patient.id ) }}" method="get">
+                  <button class="button button1" type = "submit">View Record</button>
+                    </form>
+                </div>
+                {% endfor %}
+</div>
+{% endblock %}
+
+
+
+
+
+

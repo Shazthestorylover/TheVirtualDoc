@@ -240,20 +240,20 @@ def setAppointment(doctor_id):
 def bookAppointment():
     if request.method == "POST":
         title = request.form['title']
-        start = request.form['start']
-        end = request.form['end']
+        date = request.form['date']
+        time = request.form['time']
         url = request.form['url']
-        if end == '':
-            end=start
+        """if end == '':
+            end=start"""
         events.append({
             'title' : title,
-            'start' : start,
-            'end' : end,
+            'date' : date,
+            'time' : time,
             'url' : url
         },
         )
         try:
-            appointment =Appointment( title = title, date = start, time = end, url = url, booked = False)
+            appointment =Appointment( title = title, date = date, time = time, url = url, booked = False)
             current_user.appointments.append(appointment)
             db.session.add(appointment)
             db.session.commit()
@@ -277,6 +277,10 @@ def chat():
 def patientpage(): 
     """Render the website's DocBot page."""
     return render_template('patientpage.html', title ='DocBotVirtualDoctor')
+
+@app.route('/video/')
+def video():
+    return render_template('video.html', title = 'ChatBot Video')
 
 @app.route('/patientSignUp', methods=["GET","POST"])
 def patientSignUp():
